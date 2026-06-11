@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Victoria Turns 18</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #0a0e1f;
+    color: #e8eaf6;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .stars {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle var(--dur) ease-in-out infinite var(--delay);
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; }
+    50% { opacity: var(--bright); }
+  }
+
+  .card {
+    position: relative;
+    z-index: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(180,200,255,0.15);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .event-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #7986cb;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.15;
+    margin-bottom: 0.4rem;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #7986cb;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #5c6bc0, transparent);
+    margin: 0 auto 2rem;
+  }
+
+  .input-group {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(180,200,255,0.2);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]::placeholder { color: rgba(255,255,255,0.3); }
+  input[type="text"]:focus { border-color: rgba(120,150,255,0.5); }
+
+  button.search-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: #3949ab;
+    border: none;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-bottom: 1.5rem;
+  }
+
+  button.search-btn:hover { background: #3f51b5; }
+  button.search-btn:active { transform: scale(0.98); }
+  button.search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .results-area { text-align: left; }
+
+  .prompt-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #7986cb;
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+
+  .name-option {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(180,200,255,0.15);
+    border-radius: 10px;
+    color: #c5cae9;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .name-option:hover {
+    background: rgba(100,130,255,0.1);
+    border-color: rgba(180,200,255,0.35);
+    color: #ffffff;
+  }
+
+  .result-card {
+    text-align: center;
+    padding: 1.5rem 0 0.5rem;
+    animation: fadeUp 0.4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .greeting {
+    font-size: 14px;
+    color: #9fa8da;
+    margin-bottom: 0.5rem;
+  }
+
+  .guest-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+  }
+
+  .table-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #5c6bc0;
+    margin-bottom: 0.5rem;
+  }
+
+  .table-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 7rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(100,130,255,0.4);
+  }
+
+  .try-again {
+    margin-top: 1.5rem;
+    background: none;
+    border: none;
+    color: #5c6bc0;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .try-again:hover { color: #7986cb; }
+
+  .error-msg {
+    font-size: 14px;
+    color: #9fa8da;
+    text-align: center;
+    padding: 1rem 0;
+    line-height: 1.6;
+  }
+
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 1rem auto;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="card">
+  <div class="event-label">An Evening for</div>
+  <h1>Victoria</h1>
+  <p class="subtitle">18th Birthday Celebration</p>
+  <div class="divider"></div>
+
+  <div id="search-view">
+    <div class="input-group">
+      <input type="text" id="name-input" placeholder="Type your name..." autocomplete="off" />
+    </div>
+    <button class="search-btn" id="search-btn" onclick="findSeat()">Find my table</button>
+  </div>
+
+  <div id="results-view" style="display:none;"></div>
+</div>
+
+<script>
+// -------------------------------------------------------
+// STEP 1: Paste your Google Apps Script Web App URL below
+// -------------------------------------------------------
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzN8tf6y4CgJrSERk8uRjM1cQ6GwmzSeYk7d0jU1UVG_-S9n6fUPBlpZKsnyakPXVQ1/exec";
+// -------------------------------------------------------
+
+function generateStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `
+      left: ${Math.random()*100}%;
+      top: ${Math.random()*100}%;
+      --dur: ${2 + Math.random()*3}s;
+      --delay: ${Math.random()*4}s;
+      --bright: ${0.3 + Math.random()*0.7};
+    `;
+    container.appendChild(s);
+  }
+}
+generateStars();
+
+document.getElementById('name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') findSeat();
+});
+
+function showView(html) {
+  document.getElementById('search-view').style.display = 'none';
+  const rv = document.getElementById('results-view');
+  rv.style.display = 'block';
+  rv.innerHTML = html;
+}
+
+function reset() {
+  document.getElementById('search-view').style.display = 'block';
+  document.getElementById('results-view').style.display = 'none';
+  document.getElementById('results-view').innerHTML = '';
+  document.getElementById('name-input').value = '';
+  document.getElementById('name-input').focus();
+}
+
+const SEE_HOST_NOTE = `
+  <div style="margin-top:1.25rem; padding:0.75rem 1rem; border:1px solid rgba(180,200,255,0.12); border-radius:10px; font-size:13px; color:#7986cb; line-height:1.5; text-align:center;">
+    Not seeing your name? <strong style="color:#c5cae9;">See the host</strong> for assistance.
+  </div>
+`;
+
+async function findSeat() {
+  const query = document.getElementById('name-input').value.trim();
+  if (!query) return;
+
+  showView('<div class="spinner"></div>');
+
+  try {
+    const url = `${APPS_SCRIPT_URL}?name=${encodeURIComponent(query)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    // Check if results are confident matches (all query words found in the name)
+    const queryWords = query.toLowerCase().split(' ').filter(w => w.length > 0);
+    const confidentMatches = (data || []).filter(g => {
+      const nameLower = g.name.toLowerCase();
+      return queryWords.every(w => nameLower.includes(w));
+    });
+    const hasConfidentMatch = confidentMatches.length > 0;
+
+    if (!data || data.length === 0 || !hasConfidentMatch) {
+      // No match — retry with first name AND last name separately, then combine
+      const words = query.split(' ').filter(w => w.length > 0);
+      const firstName = words[0];
+      const lastName = words.length > 1 ? words[words.length - 1] : null;
+
+      const fetches = [fetch(`${APPS_SCRIPT_URL}?name=${encodeURIComponent(firstName)}`).then(r => r.json())];
+      if (lastName && lastName.toLowerCase() !== firstName.toLowerCase()) {
+        fetches.push(fetch(`${APPS_SCRIPT_URL}?name=${encodeURIComponent(lastName)}`).then(r => r.json()));
+      }
+
+      const results = await Promise.all(fetches);
+      const combined = results.flat();
+      const seen = new Set();
+      const fallback = combined.filter(g => {
+        if (seen.has(g.name)) return false;
+        seen.add(g.name);
+        return true;
+      });
+
+      if (fallback.length > 0) {
+        // Always show the list — never auto-confirm on a fallback match
+        showPartialMatch(query, fallback);
+      } else {
+        showView(`
+          <div class="error-msg">
+            We couldn't find <strong style="color:#c5cae9">"${query}"</strong> on the guest list.<br><br>
+            Try typing just your first or last name, or see the host for help.
+          </div>
+          <button class="try-again" onclick="reset()">Try again</button>
+        `);
+      }
+    } else if (confidentMatches.length === 1) {
+      showResult(confidentMatches[0]);
+    } else {
+      showMultiple(confidentMatches);
+    }
+  } catch(e) {
+    showView(`
+      <div class="error-msg">Something went wrong. Please try again.</div>
+      <button class="try-again" onclick="reset()">Try again</button>
+    `);
+  }
+}
+
+function showResult(guest) {
+  showView(`
+    <div class="result-card">
+      <p class="greeting">Welcome to the party,</p>
+      <p class="guest-name">${guest.name}</p>
+      <p class="table-label">Your table</p>
+      <div class="table-number">${guest.table}</div>
+    </div>
+    <button class="try-again" onclick="reset()">Look up another guest</button>
+  `);
+}
+
+function showMultiple(guests) {
+  const options = guests.map(g =>
+    `<button class="name-option" onclick='showResult(${JSON.stringify(g)})'>${g.name}</button>`
+  ).join('');
+  showView(`
+    <p class="prompt-label">Which one are you?</p>
+    <div class="results-area">${options}</div>
+    ${SEE_HOST_NOTE}
+    <button class="try-again" onclick="reset()">Search again</button>
+  `);
+}
+
+function showPartialMatch(query, guests) {
+  const options = guests.map(g =>
+    `<button class="name-option" onclick='showResult(${JSON.stringify(g)})'>${g.name}</button>`
+  ).join('');
+  showView(`
+    <div class="error-msg" style="margin-bottom:1rem;">
+      No exact match for <strong style="color:#c5cae9">"${query}"</strong>.<br>Did you mean one of these?
+    </div>
+    <div class="results-area">${options}</div>
+    ${SEE_HOST_NOTE}
+    <button class="try-again" onclick="reset()">Search again</button>
+  `);
+}
+</script>
+</body>
+</html>
