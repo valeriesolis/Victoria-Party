@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Victoria Turns 18 — Share Your Photos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #0a0e1f;
+    color: #e8eaf6;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .stars {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle var(--dur) ease-in-out infinite var(--delay);
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; }
+    50% { opacity: var(--bright); }
+  }
+
+  .card {
+    position: relative;
+    z-index: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(180,200,255,0.15);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .event-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #7986cb;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.15;
+    margin-bottom: 0.4rem;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #7986cb;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #5c6bc0, transparent);
+    margin: 0 auto 2rem;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7986cb;
+    margin-bottom: 0.5rem;
+    text-align: left;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(180,200,255,0.2);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1.25rem;
+  }
+
+  input[type="text"]::placeholder { color: rgba(255,255,255,0.3); }
+  input[type="text"]:focus { border-color: rgba(120,150,255,0.5); }
+
+  .upload-zone {
+    border: 1.5px dashed rgba(180,200,255,0.25);
+    border-radius: 14px;
+    padding: 2rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: rgba(120,150,255,0.5);
+    background: rgba(100,120,255,0.06);
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: #5c6bc0;
+  }
+
+  .upload-zone p {
+    font-size: 14px;
+    color: #9fa8da;
+    line-height: 1.6;
+  }
+
+  .upload-zone span {
+    font-size: 12px;
+    color: #5c6bc0;
+    display: block;
+    margin-top: 0.4rem;
+  }
+
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 1.25rem;
+  }
+
+  .preview-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .preview-item .remove-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0,0,0,0.6);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .file-count {
+    font-size: 12px;
+    color: #7986cb;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  button.upload-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: #3949ab;
+    border: none;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  button.upload-btn:hover { background: #3f51b5; }
+  button.upload-btn:active { transform: scale(0.98); }
+  button.upload-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .progress-wrap {
+    margin-top: 1rem;
+    display: none;
+  }
+
+  .progress-bar-bg {
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: #5c6bc0;
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: #7986cb;
+    text-align: center;
+  }
+
+  .success-view {
+    text-align: center;
+    padding: 1rem 0;
+    animation: fadeUp 0.4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .success-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #7986cb;
+  }
+
+  .success-view h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+  }
+
+  .success-view p {
+    font-size: 14px;
+    color: #9fa8da;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .upload-more-btn {
+    background: none;
+    border: 1px solid rgba(180,200,255,0.2);
+    border-radius: 12px;
+    color: #9fa8da;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    padding: 0.7rem 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .upload-more-btn:hover {
+    border-color: rgba(180,200,255,0.4);
+    color: #ffffff;
+  }
+
+  .error-msg {
+    font-size: 13px;
+    color: #ef9a9a;
+    margin-top: 0.75rem;
+    text-align: center;
+    line-height: 1.5;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="card">
+  <div class="event-label">Share the Night</div>
+  <h1>Victoria</h1>
+  <p class="subtitle">18th Birthday Celebration</p>
+  <div class="divider"></div>
+
+  <div id="upload-view">
+    <label class="field-label" for="guest-name">Your name <span style="color:#5c6bc0; font-size:10px; letter-spacing:1px;">(optional)</span></label>
+    <input type="text" id="guest-name" placeholder="e.g. Maria Reyes" autocomplete="off" />
+
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" id="file-input" accept="image/*" multiple />
+      <div class="upload-icon">📷</div>
+      <p>Tap to choose photos<br>or drag and drop here</p>
+      <span>JPG, PNG, HEIC accepted</span>
+    </div>
+
+    <div id="preview-grid" class="preview-grid" style="display:none;"></div>
+    <div id="file-count" class="file-count" style="display:none;"></div>
+
+    <button class="upload-btn" id="upload-btn" onclick="startUpload()" disabled>Share photos</button>
+
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-label" id="progress-label">Uploading...</div>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <div id="success-view" style="display:none;">
+    <div class="success-view">
+      <div class="success-icon">🎉</div>
+      <h2>Thank you!</h2>
+      <p>Your photos have been shared.<br>Enjoy the celebration!</p>
+      <button class="upload-more-btn" onclick="resetForm()">Upload more photos</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// -------------------------------------------------------
+// STEP 1: Paste your Photo Upload Apps Script URL below
+// -------------------------------------------------------
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzl8kpwLGEc4XhTb76Ilf7X2t2cwaMwT9QziNM_77qcwFLEGXSNp0dFzReOIwY86ia/exec";
+// -------------------------------------------------------
+
+let selectedFiles = [];
+
+function generateStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `
+      left: ${Math.random()*100}%;
+      top: ${Math.random()*100}%;
+      --dur: ${2 + Math.random()*3}s;
+      --delay: ${Math.random()*4}s;
+      --bright: ${0.3 + Math.random()*0.7};
+    `;
+    container.appendChild(s);
+  }
+}
+generateStars();
+
+const zone = document.getElementById('upload-zone');
+const fileInput = document.getElementById('file-input');
+
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+zone.addEventListener('drop', e => {
+  e.preventDefault();
+  zone.classList.remove('dragover');
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  addFiles(files);
+});
+
+fileInput.addEventListener('change', () => {
+  addFiles(Array.from(fileInput.files));
+  fileInput.value = '';
+});
+
+function addFiles(files) {
+  selectedFiles = selectedFiles.concat(files);
+  renderPreviews();
+}
+
+function removeFile(index) {
+  selectedFiles.splice(index, 1);
+  renderPreviews();
+}
+
+function renderPreviews() {
+  const grid = document.getElementById('preview-grid');
+  const countEl = document.getElementById('file-count');
+  const btn = document.getElementById('upload-btn');
+
+  if (selectedFiles.length === 0) {
+    grid.style.display = 'none';
+    countEl.style.display = 'none';
+    btn.disabled = true;
+    return;
+  }
+
+  grid.style.display = 'grid';
+  countEl.style.display = 'block';
+  countEl.textContent = `${selectedFiles.length} photo${selectedFiles.length > 1 ? 's' : ''} selected`;
+  btn.disabled = false;
+
+  grid.innerHTML = '';
+  selectedFiles.forEach((file, i) => {
+    const item = document.createElement('div');
+    item.className = 'preview-item';
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.innerHTML = '✕';
+    removeBtn.onclick = (e) => { e.stopPropagation(); removeFile(i); };
+    item.appendChild(img);
+    item.appendChild(removeBtn);
+    grid.appendChild(item);
+  });
+}
+
+function toBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function startUpload() {
+  if (selectedFiles.length === 0) return;
+
+  const guestName = document.getElementById('guest-name').value.trim().replace(/\s+/g, '_') || 'Guest';
+  const btn = document.getElementById('upload-btn');
+  const progressWrap = document.getElementById('progress-wrap');
+  const progressFill = document.getElementById('progress-fill');
+  const progressLabel = document.getElementById('progress-label');
+  const errorMsg = document.getElementById('error-msg');
+
+  btn.disabled = true;
+  errorMsg.style.display = 'none';
+  progressWrap.style.display = 'block';
+
+  let uploaded = 0;
+  let failed = 0;
+
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const file = selectedFiles[i];
+    progressLabel.textContent = `Uploading ${i + 1} of ${selectedFiles.length}...`;
+    progressFill.style.width = `${Math.round((i / selectedFiles.length) * 100)}%`;
+
+    try {
+      const base64 = await toBase64(file);
+      const timestamp = Date.now();
+      const ext = file.name.split('.').pop();
+      const fileName = `${timestamp}_${i + 1}.${ext}`;
+
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          fileName,
+          fileData: base64,
+          mimeType: file.type,
+          guestName
+        })
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        uploaded++;
+      } else {
+        failed++;
+      }
+    } catch (e) {
+      failed++;
+    }
+  }
+
+  progressFill.style.width = '100%';
+
+  if (uploaded > 0) {
+    document.getElementById('upload-view').style.display = 'none';
+    document.getElementById('success-view').style.display = 'block';
+  } else {
+    progressWrap.style.display = 'none';
+    btn.disabled = false;
+    errorMsg.style.display = 'block';
+    errorMsg.textContent = 'Upload failed. Please check your connection and try again.';
+  }
+}
+
+function resetForm() {
+  selectedFiles = [];
+  document.getElementById('guest-name').value = '';
+  document.getElementById('preview-grid').style.display = 'none';
+  document.getElementById('file-count').style.display = 'none';
+  document.getElementById('upload-btn').disabled = true;
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('error-msg').style.display = 'none';
+  document.getElementById('upload-view').style.display = 'block';
+  document.getElementById('success-view').style.display = 'none';
+}
+</script>
+</body>
+</html>
